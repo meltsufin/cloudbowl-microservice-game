@@ -96,7 +96,43 @@ public class ApplicationTests {
     RequestEntity request = RequestEntity.post(new URI(url)).contentType(MediaType.APPLICATION_JSON).body(body);
     ResponseEntity<String> response = template.exchange(request, String.class);
 
-    assertThat(response.getBody()).isNotEqualTo("T");
+    assertThat(response.getBody()).isEqualTo("F");
+  }
+
+  @Test
+  public void testIamInRange_gottaTurn() throws URISyntaxException {
+    String url = String.format("http://localhost:%s/", this.port);
+    String body = "{\n" +
+            "  \"_links\": {\n" +
+            "    \"self\": {\n" +
+            "      \"href\": \"https://foo.com\"\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"arena\": {\n" +
+            "    \"dims\": [4,3],\n" +
+            "    \"state\": {\n" +
+            "      \"https://foo.com\": {\n" +
+            "        \"x\": 4,\n" +
+            "        \"y\": 0,\n" +
+            "        \"direction\": \"W\",\n" +
+            "        \"wasHit\": false,\n" +
+            "        \"score\": 0\n" +
+            "      },\n" +
+            "      \"1\": {\n" +
+            "        \"x\": 3,\n" +
+            "        \"y\": 0,\n" +
+            "        \"direction\": \"E\",\n" +
+            "        \"wasHit\": false,\n" +
+            "        \"score\": 0\n" +
+            "      }\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+
+    RequestEntity request = RequestEntity.post(new URI(url)).contentType(MediaType.APPLICATION_JSON).body(body);
+    ResponseEntity<String> response = template.exchange(request, String.class);
+
+    assertThat(response.getBody()).isEqualTo("R");
   }
 
   @Test

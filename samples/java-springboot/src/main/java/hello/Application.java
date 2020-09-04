@@ -59,8 +59,13 @@ public class Application {
     String result = null;
 
     if (iAmATarget(arenaUpdate)) {
-      result = getRandomAction(new String[]{"F", "R"});
-      System.out.println("I am in range. Random move: " + result);
+      if (isForwardPossible(arenaUpdate)) {
+        result = "F";
+        System.out.println("I am in range. Can move forward.");
+      } else {
+        result = "R";
+        System.out.println("I am in range. Can't move forward. So turning: " + result);
+      }
     } else if (isTargetInRange(arenaUpdate)) {
       result = "T";
       System.out.println("Target is in range. Throwing!");
@@ -138,6 +143,27 @@ public class Application {
     int i = new Random().nextInt(commands.length);
     result = commands[i];
     return result;
+  }
+
+  private boolean isForwardPossible(ArenaUpdate arenaUpdate) {
+    PlayerState self = arenaUpdate.arena.state.get(arenaUpdate._links.self.href);
+    for (String href : arenaUpdate.arena.state.keySet()) {
+      if (!href.equals(arenaUpdate._links.self.href)) {
+        PlayerState state = arenaUpdate.arena.state.get(href);
+        int dx = state.x - self.x;
+        int dy = state.y - self.y;
+        if (self.direction.equals("N") && (dx == 0 && dy == -1 || self.y == 0)) {
+          return false;
+        } else if (self.direction.equals("S") && (dx == 0 && dy == 1 || self.y == arenaUpdate.arena.dims.get(1) - 1)) {
+          return false;
+        } else if (self.direction.equals("W") && (dy == 0 && dx == -1 || self.x == 0)) {
+          return false;
+        } else if (self.direction.equals("E") && (dy == 0 && dx == 1 || self.x == arenaUpdate.arena.dims.get(0) - 1)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   private String getMoveTowardsCenter(ArenaUpdate arenaUpdate) {
